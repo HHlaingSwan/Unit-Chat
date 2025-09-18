@@ -1,6 +1,5 @@
-import { useEffect, useState, useRef } from "react";
-import { signOut } from "firebase/auth";
-import { useNavigate } from "react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { signOut, updateProfile } from "firebase/auth";
 import {
 	collection,
 	addDoc,
@@ -17,14 +16,16 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "./context/AuthContext.tsx";
 import { auth, db } from "./firebase.ts";
+import { toast } from "react-toastify";
 import { type Message, type OnlineUser } from "./types.ts";
 import Sidebar from "./components/Sidebar.tsx";
 import ChatArea from "./components/ChatArea.tsx";
 
+const INACTIVITY_TIMEOUT = 45 * 60 * 1000; // 45 minutes
+
 const App = () => {
 	useAuth();
 	const user = auth.currentUser;
-	const navigate = useNavigate();
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [newMessage, setNewMessage] = useState("");
 	const [typingUsers, setTypingUsers] = useState<string[]>([]);
@@ -32,6 +33,7 @@ const App = () => {
 	const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
 	const [editedMessageText, setEditedMessageText] = useState("");
 	const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 	// Fetch messages from Firestore in real-time
 	useEffect(() => {
@@ -137,15 +139,81 @@ const App = () => {
 		return () => unsubscribe();
 	}, [user]);
 
-	const handleSignOut = async () => {
+	const handleSignOut = useCallback(async () => {
 		try {
+			// Clear any pending inactivity timer
+			if (inactivityTimerRef.current) {
+				clearTimeout(inactivityTimerRef.current);
+			}
 			if (user) {
 				await updateDoc(doc(db, "users", user.uid), { status: "offline" });
 			}
 			await signOut(auth);
-			navigate("/"); // Navigate to the login/root page
 		} catch (error) {
 			console.error("Error signing out: ", error);
+		}
+	}, [user]);
+
+	// Auto sign-out on inactivity
+	useEffect(() => {
+		if (!user) {
+			return;
+		}
+
+		const resetInactivityTimer = () => {
+			if (inactivityTimerRef.current) {
+				clearTimeout(inactivityTimerRef.current);
+			}
+			inactivityTimerRef.current = setTimeout(() => {
+				toast.info("You have been signed out due to inactivity.");
+				handleSignOut();
+			}, INACTIVITY_TIMEOUT);
+		};
+
+		const activityEvents = [
+			"mousemove",
+			"keydown",
+			"click",
+			"scroll",
+			"touchstart",
+		];
+
+		activityEvents.forEach((event) =>
+			window.addEventListener(event, resetInactivityTimer)
+		);
+		resetInactivityTimer(); // Start the timer initially
+
+		return () => {
+			if (inactivityTimerRef.current) {
+				clearTimeout(inactivityTimerRef.current);
+			}
+			activityEvents.forEach((event) =>
+				window.removeEventListener(event, resetInactivityTimer)
+			);
+		};
+	}, [user, handleSignOut]);
+
+	const handleProfileUpdate = async (newName: string, newPhotoURL: string) => {
+		if (!user) return;
+
+		try {
+			// Update Firebase Auth profile
+			await updateProfile(user, {
+				displayName: newName,
+				photoURL: newPhotoURL,
+			});
+
+			// Update user document in Firestore
+			const userDocRef = doc(db, "users", user.uid);
+			await updateDoc(userDocRef, {
+				name: newName,
+				photoURL: newPhotoURL,
+			});
+
+			toast.success("Profile updated successfully!");
+		} catch (error: any) {
+			console.error("Error updating profile: ", error);
+			toast.error("Failed to update profile. Please try again.");
 		}
 	};
 
@@ -268,6 +336,7 @@ const App = () => {
 					user={user}
 					onlineUsers={onlineUsers}
 					onSignOut={handleSignOut}
+					onProfileUpdate={handleProfileUpdate}
 				/>
 				<ChatArea
 					user={user}

@@ -1,17 +1,40 @@
+import { useState } from "react";
 import { type User } from "firebase/auth";
 import { type OnlineUser } from "../types";
+import ProfileModal from "./ProfileModal";
+import ConfirmationModal from "./ConfirmationModal";
 
 type SidebarProps = {
 	user: User;
 	onlineUsers: OnlineUser[];
 	onSignOut: () => void;
+	onProfileUpdate: (newName: string, newPhotoURL: string) => Promise<void>;
 };
 
-const Sidebar = ({ user, onlineUsers, onSignOut }: SidebarProps) => {
+const Sidebar = ({
+	user,
+	onlineUsers,
+	onSignOut,
+	onProfileUpdate,
+}: SidebarProps) => {
+	const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+	const handleSignOutClick = () => {
+		setIsConfirmModalOpen(true);
+	};
+
+	const handleConfirmSignOut = () => {
+		onSignOut();
+		setIsConfirmModalOpen(false);
+	};
+
 	return (
 		<div className='flex w-80 flex-col border-r border-white/10'>
 			{/* User Info Header */}
-			<div className='flex items-center gap-4 p-4'>
+			<div
+				className='flex cursor-pointer items-center gap-4 p-4 transition-colors hover:bg-white/5'
+				onClick={() => setIsProfileModalOpen(true)}>
 				<img
 					src={
 						user.photoURL ||
@@ -64,11 +87,25 @@ const Sidebar = ({ user, onlineUsers, onSignOut }: SidebarProps) => {
 			<hr className='border-white/10' />
 			<div className='p-4'>
 				<button
-					onClick={onSignOut}
+					onClick={handleSignOutClick}
 					className='w-full rounded-lg bg-red-600/90 py-2 px-4 font-semibold text-white transition-colors hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 focus:ring-offset-black/20'>
 					Sign Out
 				</button>
 			</div>
+			<ProfileModal
+				user={user}
+				isOpen={isProfileModalOpen}
+				onClose={() => setIsProfileModalOpen(false)}
+				onSave={onProfileUpdate}
+			/>
+			<ConfirmationModal
+				isOpen={isConfirmModalOpen}
+				onClose={() => setIsConfirmModalOpen(false)}
+				onConfirm={handleConfirmSignOut}
+				title='Confirm Sign Out'
+				message='Are you sure you want to sign out?'
+				confirmText='Sign Out'
+			/>
 		</div>
 	);
 };

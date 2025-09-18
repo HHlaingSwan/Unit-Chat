@@ -1,3 +1,5 @@
+import { RiSendPlaneFill } from "react-icons/ri";
+
 type MessageInputProps = {
 	newMessage: string;
 	onSendMessage: (e: React.FormEvent) => Promise<void>;
@@ -25,7 +27,7 @@ const MessageInput = ({
 					type='submit'
 					className='rounded-lg bg-blue-500 px-6 py-2 font-semibold transition-colors hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50'
 					disabled={!newMessage.trim()}>
-					Send
+					<RiSendPlaneFill className='h-6 w-6 text-white' />
 				</button>
 			</form>
 		</div>

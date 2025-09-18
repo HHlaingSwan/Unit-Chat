@@ -1,69 +1,89 @@
-# React + TypeScript + Vite
+# Real-Time Chat Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, real-time chat application built with React, TypeScript, and Firebase. It features user authentication, live messaging, online presence indicators, and profile customization.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **User Authentication**: Secure sign-up and sign-in with email, username, and password.
+- **Real-Time Messaging**: Send and receive messages instantly with Firestore's real-time capabilities.
+- **Message Management**: Edit and delete your own messages.
+- **Online Presence**: See who's currently online.
+- **Typing Indicators**: Know when another user is typing a message.
+- **Profile Customization**: Change your display name and profile picture by uploading an image or generating a random avatar.
+- **Session Management**: Automatic sign-out after a period of inactivity for enhanced security.
+- **User-Friendly UI**: Built with Tailwind CSS, featuring:
+  - Toast notifications for success and error messages.
+  - Instant form validation with clear error messages.
+  - A password strength meter during registration.
+  - A show/hide password toggle.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS, React Router
+- **Backend & Services**: Firebase (Authentication, Firestore, Cloud Storage)
+- **UI Feedback**: React Toastify
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Getting Started
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+### Prerequisites
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- Node.js (v18 or later)
+- npm, yarn, or pnpm
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Installation & Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1.  **Clone the repository:**
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+    ```bash
+    git clone <repository-url>
+    cd Web-Socket
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Set up Firebase:**
+
+    - Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project.
+    - In your project, go to **Project Settings** and add a new **Web app**.
+    - Copy the `firebaseConfig` object.
+    - In your project, enable **Authentication** with the "Email/Password" provider.
+    - Set up **Firestore Database** in test mode for now.
+    - Set up **Storage** in test mode for now.
+
+4.  **Configure Environment Variables:**
+
+    - Create a `.env` file in the root of the project.
+    - Add your Firebase configuration keys to the `.env` file. Vite requires environment variables to be prefixed with `VITE_`.
+
+    ```env
+    VITE_FIREBASE_API_KEY="your_api_key"
+    VITE_FIREBASE_AUTH_DOMAIN="your_auth_domain"
+    VITE_FIREBASE_PROJECT_ID="your_project_id"
+    VITE_FIREBASE_STORAGE_BUCKET="your_storage_bucket"
+    VITE_FIREBASE_MESSAGING_SENDER_ID="your_messaging_sender_id"
+    VITE_FIREBASE_APP_ID="your_app_id"
+    VITE_FIREBASE_MEASUREMENT_ID="your_measurement_id"
+    ```
+
+5.  **Run the development server:**
+    ```bash
+    npm run dev
+    ```
+    The application should now be running on `http://localhost:5173`.
+
+## Deployment
+
+This application is configured for easy deployment on platforms like Vercel or Netlify.
+
+1.  Push your code to a GitHub repository.
+2.  Import the repository into your hosting provider (e.g., Vercel).
+3.  Configure the environment variables in your hosting provider's project settings. Use the same keys and values from your `.env` file.
+4.  Deploy!
+
+## License
+
+This project is licensed under the MIT License.
