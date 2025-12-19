@@ -1,4 +1,14 @@
 export const createWelcomeEmailTemplate = (userName, clientUrl) => {
+  const escapeHtml = (unsafe) => {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+  const safeUserName = escapeHtml(userName);
+  const safeClientUrl = escapeHtml(clientUrl);
   return `
     <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #e6e6e6; border-radius: 12px; overflow: hidden;">
       
@@ -11,7 +21,7 @@ export const createWelcomeEmailTemplate = (userName, clientUrl) => {
       
       <!-- Body -->
       <div style="padding: 30px 40px;">
-        <h2 style="font-size: 22px; color: #333; margin-top: 0;">Hi ${userName},</h2>
+        <h2 style="font-size: 22px; color: #333; margin-top: 0;">Hi ${safeUserName},</h2>
         <p style="font-size: 16px; color: #555;">Thank you for signing up. We're on a mission to make communication seamless and efficient, and we're thrilled you're joining us on this journey.</p>
         
         <!-- Getting Started -->
@@ -26,7 +36,7 @@ export const createWelcomeEmailTemplate = (userName, clientUrl) => {
         
         <!-- Call to Action -->
         <div style="text-align: center; margin: 40px 0;">
-          <a href="${clientUrl}" style="background-color: #4A90E2; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">Take Me to My Account</a>
+          <a href="${safeClientUrl}" style="background-color: #4A90E2; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-size: 16px; font-weight: 600; display: inline-block;">Take Me to My Account</a>
         </div>
         
         <p style="font-size: 16px; color: #555;">If you have any questions, just reply to this email. We're always happy to help.</p>

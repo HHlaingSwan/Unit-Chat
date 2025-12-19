@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-
 dotenv.config();
 
 export const envConfig = {
@@ -11,4 +10,26 @@ export const envConfig = {
   RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
   RESEND_FROM_NAME: process.env.RESEND_FROM_NAME,
   CLIENT_URL: process.env.CLIENT_URL || "http://localhost:3000",
+  COLUDINARY_CLOUD_NAME: process.env.COLUDINARY_CLOUD_NAME,
+  COLUDINARY_API_KEY: process.env.COLUDINARY_API_KEY,
+  COLUDINARY_API_SECRET: process.env.COLUDINARY_API_SECRET,
 };
+// Validate required environment variables
+const requiredInProd = [
+  "MONGODB_URI",
+  "JWT_SECRET",
+  "RESEND_API_KEY",
+  "RESEND_FROM_EMAIL",
+  "RESEND_FROM_NAME",
+  "CLIENT_URL",
+];
+if (envConfig.NODE_ENV === "production") {
+  const mising = requiredInProd.filter((key) => !process.env[key]);
+  if (mising.length > 0) {
+    throw new Error(
+      `Missing required environment variables in production: ${mising.join(
+        ", "
+      )}`
+    );
+  }
+}
