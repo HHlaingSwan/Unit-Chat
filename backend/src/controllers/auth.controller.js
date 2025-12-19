@@ -1,4 +1,6 @@
+import { envConfig } from "../db/env.js";
 import { generateToken } from "../db/util.js";
+import { sendWelcomeEmail } from "../emails/emailHandler.js";
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 
@@ -43,12 +45,15 @@ export const signUp = async (req, res) => {
     } else {
       generateToken(newUser._id, res);
       // TODO: Save user
-      await newUser.save();
+      const savedUser = await newUser.save();
       res.status(201).json({
         success: true,
         message: "User created successfully",
-        user: newUser,
+        user: savedUser,
       });
+      // TODO: Send welcome email
+      const clientUrl = envConfig.CLIENT_URL;
+      await sendWelcomeEmail(savedUser.email, savedUser.fullName, clientUrl);
     }
   } catch (error) {
     console.log("Error in signUp:", error);
