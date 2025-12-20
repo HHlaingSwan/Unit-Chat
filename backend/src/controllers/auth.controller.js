@@ -71,16 +71,23 @@ export const signUp = async (req, res) => {
         success: true,
         message: "User created successfully",
         accessToken: token,
-        user: {
-          _id: savedUser._id,
-          fullName: savedUser.fullName,
-          email: savedUser.email,
-          profileImage: savedUser.profileImage,
-        },
+        // user: {
+        //   _id: savedUser._id,
+        //   fullName: savedUser.fullName,
+        //   email: savedUser.email,
+        //   profileImage: savedUser.profileImage,
+        // },
       });
-      // TODO: Send welcome email
+      // Send welcome email asynchronously and do NOT fail signup if email sending fails.
+      // Many email providers (like Resend) may reject messages during development
+      // if the `from` address or recipient isn't verified. We log failures but
+      // keep user creation successful.
       const clientUrl = envConfig.CLIENT_URL;
-      await sendWelcomeEmail(savedUser.email, savedUser.fullName, clientUrl);
+      sendWelcomeEmail(savedUser.email, savedUser.fullName, clientUrl).catch(
+        (err) => {
+          console.error("Welcome email failed (non-fatal):", err);
+        }
+      );
     }
   } catch (error) {
     console.log("Error in signUp:", error);
