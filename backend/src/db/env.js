@@ -13,6 +13,8 @@ export const envConfig = {
   COLUDINARY_CLOUD_NAME: process.env.COLUDINARY_CLOUD_NAME,
   COLUDINARY_API_KEY: process.env.COLUDINARY_API_KEY,
   COLUDINARY_API_SECRET: process.env.COLUDINARY_API_SECRET,
+  ARCJET_API_KEY: process.env.ARCJET_API_KEY,
+  ARCJET_ENV: process.env.ARCJET_ENV,
 };
 // Validate required environment variables
 const requiredInProd = [

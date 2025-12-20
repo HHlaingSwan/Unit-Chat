@@ -51,6 +51,6 @@ export const requireAuth = async (req, res, next) => {
     next();
   } catch (error) {
     console.log("Error in requireAuth:", error);
-    return res.status(500).json({ message: "Unauthorized" });
+    next();
   }
 };

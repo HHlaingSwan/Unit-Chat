@@ -6,8 +6,15 @@ import {
   updateProfile,
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
+import { arcjetMiddleware } from "../middleware/arcjet.middleware.js";
 
 const authRouter = Router();
+
+// authRouter.use(arcjetMiddleware);
+
+authRouter.get("/test", arcjetMiddleware, (req, res) => {
+  res.status(200).json({ message: "Arcjet middleware test passed." });
+});
 
 authRouter.post("/signup", signUp);
 authRouter.post("/signin", signIn);
