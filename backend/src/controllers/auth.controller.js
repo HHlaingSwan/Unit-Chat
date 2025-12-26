@@ -25,10 +25,10 @@ import bcrypt from "bcryptjs";
 */
 
 export const signUp = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  const { username, email, password } = req.body;
   try {
     // TODO: Check if all fields are provided
-    if (!fullName || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -56,7 +56,7 @@ export const signUp = async (req, res) => {
 
     // TODO: Create user
     const newUser = new User({
-      fullName,
+      username,
       email,
       password: hashedPassword,
     });
@@ -73,7 +73,7 @@ export const signUp = async (req, res) => {
         accessToken: token,
         // user: {
         //   _id: savedUser._id,
-        //   fullName: savedUser.fullName,
+        //   username: savedUser.username,
         //   email: savedUser.email,
         //   profileImage: savedUser.profileImage,
         // },
@@ -83,7 +83,7 @@ export const signUp = async (req, res) => {
       // if the `from` address or recipient isn't verified. We log failures but
       // keep user creation successful.
       const clientUrl = envConfig.CLIENT_URL;
-      sendWelcomeEmail(savedUser.email, savedUser.fullName, clientUrl).catch(
+      sendWelcomeEmail(savedUser.email, savedUser.username, clientUrl).catch(
         (err) => {
           console.error("Welcome email failed (non-fatal):", err);
         }
@@ -117,12 +117,12 @@ export const signIn = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "User signed in successfully",
-      accessToken: token,
       user: {
         _id: user._id,
-        fullName: user.fullName,
+        username: user.username,
         email: user.email,
         profileImage: user.profileImage,
+        accessToken: token,
       },
     });
   } catch (error) {

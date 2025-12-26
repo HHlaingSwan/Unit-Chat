@@ -1,19 +1,1 @@
 @import "tailwindcss";
-
-* {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
-}
-
-body {
-  /* A cool, dark, animated gradient background */
-  background-color: #0f172a;
-  /* slate-900 */
-  overflow: hidden;
-  /* Hide the overflow from the decorative shapes */
-  position: relative;
-  min-height: 100vh;
-
-}

@@ -17,8 +17,8 @@ authRouter.get("/test", arcjetMiddleware, (req, res) => {
 });
 
 authRouter.post("/signup", signUp);
-authRouter.post("/signin", signIn);
-authRouter.post("/signout", signOut);
+authRouter.post("/login", signIn);
+authRouter.post("/logout", signOut);
 authRouter.post("/profile-update", requireAuth, updateProfile);
 authRouter.get("/protected", requireAuth, (req, res) =>
   res

@@ -1,4 +1,9 @@
+import useAuthStore from "./store/useAuthStore";
+
 const App = () => {
+  const { authUser } = useAuthStore();
+  console.log("authUser", authUser);
+
   return (
     <div className="relative flex h-screen w-screen items-center justify-center">
       <img

@@ -5,13 +5,20 @@ import messageRouter from "./routes/message.route.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 import { envConfig } from "./db/env.js";
+import cors from "cors";
 
 const app = express();
-// const __dirname = path.resolve();
+// const __dirname = path.resolve()
 const port = envConfig.port || 3300;
 const url = envConfig.MONGODB_URI;
 
 app.use(express.json()); // Parse JSON request bodies
+app.use(
+  cors({
+    origin: envConfig.CLIENT_URL,
+    credentials: true,
+  })
+);
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded request bodies
 app.use(express.static("public")); // Serve static files from the "public" directory
 app.use(cookieParser());
