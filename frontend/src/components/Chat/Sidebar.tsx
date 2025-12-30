@@ -31,7 +31,7 @@ const Sidebar = () => {
   return (
     <div className="flex flex-col w-1/4 border-r border-white/20 p-4">
       {/* User Profile Section */}
-      <div className="relative flex items-center gap-4 p-3 rounded-md mb-6">
+      <div className="relative flex items-center gap-4 p-3 rounded-md ">
         <img
           src={authUser?.profileImage || "login.png"} // Use a default avatar if none is present
           alt={authUser?.username}
@@ -53,6 +53,7 @@ const Sidebar = () => {
           <LogOut />
         </button>
       </div>
+      <div className="border-b border-white/20 w-full  mb-4"></div>
 
       {/* Conversations List */}
       <h2 className="text-xl font-bold mb-4">Conversations</h2>
@@ -64,12 +65,14 @@ const Sidebar = () => {
               .map((user) => (
                 <li
                   key={user._id}
-                  className={`flex items-center  p-2 mb-2 rounded-lg cursor-pointer ${
+                  className={`flex items-center p-2 mb-2 rounded-lg ${
                     selectedUser?._id === user._id
-                      ? "bg-white/20"
-                      : "hover:bg-white/10"
+                      ? "bg-white/20 cursor-default"
+                      : "hover:bg-white/10 cursor-pointer"
                   }`}
-                  onClick={() => selectUser(user)}
+                  onClick={() =>
+                    selectedUser?._id !== user._id && selectUser(user)
+                  }
                 >
                   <img
                     src={user.profileImage || "/login.png"} // Use a default avatar if none is present

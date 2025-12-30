@@ -1,5 +1,6 @@
 import React, { useState, type ChangeEvent } from "react";
 import useChatStore from "../../store/useChatStore";
+import { Link, Send } from "lucide-react";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -54,21 +55,7 @@ const MessageInput = () => {
       )}
       <form onSubmit={handleSubmit} className="flex items-center">
         <label htmlFor="file-upload" className="cursor-pointer mr-4">
-          {/* Using a simple SVG for the attachment icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 text-gray-400 hover:text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15.172 7l-6.364 6.364a2 2 0 000 2.828l.707.707a2 2 0 002.828 0L19 10.414M12 12l-2-2m2 2l2-2m-2 2v6"
-            />
-          </svg>
+          <Link className="h-6 w-6 text-gray-400 hover:text-white" />
           <input
             id="file-upload"
             name="file-upload"
@@ -89,7 +76,7 @@ const MessageInput = () => {
           type="submit"
           className="ml-4 px-4 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700"
         >
-          Send
+          <Send />
         </button>
       </form>
     </div>

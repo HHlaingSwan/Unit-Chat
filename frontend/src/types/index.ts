@@ -12,6 +12,9 @@ export interface Message {
   isSender: boolean;
   text: string;
   image?: string;
+  createdAt: string;
+  seen: boolean;
+  reactions: string[];
 }
 
 export interface NewMessage {
