@@ -39,9 +39,10 @@ export const getMessageByUserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text } = req.body;
     const { id: receiverId } = req.params;
     const senderId = req.user._id;
+    let image = req.file;
 
     if (!text && !image) {
       return res.status(400).json({ message: "Message or image is required" });
@@ -60,7 +61,10 @@ export const sendMessage = async (req, res) => {
     // or a remote URL accepted by Cloudinary. Validate uploadResponse before using it.
     let imageUrl = null;
     if (image) {
-      const uploadResponse = await cloudinary.uploader.upload(image);
+      // Convert buffer to data URI
+      const b64 = Buffer.from(image.buffer).toString("base64");
+      let dataURI = "data:" + image.mimetype + ";base64," + b64;
+      const uploadResponse = await cloudinary.uploader.upload(dataURI);
       if (!uploadResponse || !uploadResponse.secure_url) {
         return res.status(400).json({ message: "Image upload failed" });
       }

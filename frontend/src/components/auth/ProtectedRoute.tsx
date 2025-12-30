@@ -4,13 +4,14 @@ import useAuthStore from "../../store/useAuthStore";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const { authUser, isCheckingAuth } = useAuthStore();
+  const localStorageAuthUser = localStorage.getItem("authUser");
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isCheckingAuth && !authUser) {
+    if (!isCheckingAuth && !authUser && !localStorageAuthUser) {
       navigate("/login");
     }
-  }, [authUser, isCheckingAuth, navigate]);
+  }, [authUser, isCheckingAuth, localStorageAuthUser]);
 
   if (isCheckingAuth) {
     return (

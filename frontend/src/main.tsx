@@ -5,12 +5,13 @@ import { BrowserRouter, Routes, Route } from "react-router";
 import App from "./App";
 import Login from "./components/auth/Login";
 import SignUp from "./components/auth/SignUp";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+// import ProtectedRoute from "./components/auth/ProtectedRoute";
 import GuestRoute from "./components/auth/GuestRoute";
 import useAuthStore from "./store/useAuthStore";
 import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
 
-// Check for auth status on initial load
+// Conditionally check for auth status on initial load
 useAuthStore.getState().checkAuth();
 
 const Root = () => {
