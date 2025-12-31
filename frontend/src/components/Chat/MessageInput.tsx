@@ -1,12 +1,12 @@
 import React, { useState, type ChangeEvent } from "react";
 import useChatStore from "../../store/useChatStore";
-import { Link, Send } from "lucide-react";
+import { Link, Send, Loader } from "lucide-react";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage, isSendingMessage } = useChatStore();
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -28,12 +28,12 @@ const MessageInput = () => {
     sendMessage({
       text,
       image,
+    }).then(() => {
+      // Reset form only after the message is sent
+      setText("");
+      setImage(null);
+      setPreviewUrl(null);
     });
-
-    // Reset form
-    setText("");
-    setImage(null);
-    setPreviewUrl(null);
   };
 
   return (
@@ -48,6 +48,7 @@ const MessageInput = () => {
           <button
             onClick={handleRemoveImage}
             className="absolute top-0 right-0 bg-red-600 text-white rounded-full p-1 text-xs"
+            disabled={isSendingMessage}
           >
             X
           </button>
@@ -63,6 +64,7 @@ const MessageInput = () => {
             className="sr-only"
             accept="image/*"
             onChange={handleImageChange}
+            disabled={isSendingMessage}
           />
         </label>
         <input
@@ -71,12 +73,18 @@ const MessageInput = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           className="flex-1 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          disabled={isSendingMessage}
         />
         <button
           type="submit"
-          className="ml-4 px-4 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700"
+          className="ml-4 px-4 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700 disabled:bg-indigo-400"
+          disabled={isSendingMessage}
         >
-          <Send />
+          {isSendingMessage ? (
+            <Loader className="animate-spin" />
+          ) : (
+            <Send />
+          )}
         </button>
       </form>
     </div>

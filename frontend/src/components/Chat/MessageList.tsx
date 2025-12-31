@@ -9,7 +9,9 @@ const MessageSkeleton = ({ isSender }: { isSender: boolean }) => {
         isSender ? "justify-end" : "justify-start"
       }`}
     >
-      {!isSender && <div className="skeleton w-10 h-10 rounded-full shrink-0" />}
+      {!isSender && (
+        <div className="skeleton w-10 h-10 rounded-full shrink-0" />
+      )}
       <div
         className={`flex flex-col gap-2 ${
           isSender ? "items-end" : "items-start"
@@ -27,12 +29,14 @@ const MessageList = () => {
   const { messages, isLoadingMessages } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  // const scrollToBottom = () => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  // };
 
   useEffect(() => {
-    scrollToBottom();
+    setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: "instant" });
+    }, 0);
   }, [messages]);
 
   return (

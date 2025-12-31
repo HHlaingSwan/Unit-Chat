@@ -9,6 +9,7 @@ interface ChatState {
   messages: Message[];
   isLoadingMessages: boolean;
   isUsersLoading: boolean;
+  isSendingMessage: boolean;
   selectUser: (user: User) => void;
   getUsers: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
@@ -18,6 +19,7 @@ interface ChatState {
 const useChatStore = create<ChatState>((set, get) => ({
   users: [],
   isUsersLoading: false,
+  isSendingMessage: false,
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -50,23 +52,26 @@ const useChatStore = create<ChatState>((set, get) => ({
     get().getMessages(user._id);
   },
   sendMessage: async (message) => {
-    const formData = new FormData();
-    formData.append("text", message.text);
-    if (message.image) {
-      formData.append("image", message.image);
-    }
+    set({ isSendingMessage: true });
     try {
+      const formData = new FormData();
+      if (message.text) {
+        formData.append("text", message.text);
+      }
+      if (message.image) {
+        formData.append("image", message.image);
+      }
       const res = await fetcher.post<Message>(
         `/message/send/${get().selectedUser?._id}`,
         formData
       );
-      console.log("res", res);
-
       set((state) => ({
         messages: [...state.messages, res],
       }));
     } catch (error) {
       console.error("Error sending message:", error);
+    } finally {
+      set({ isSendingMessage: false });
     }
   },
 }));

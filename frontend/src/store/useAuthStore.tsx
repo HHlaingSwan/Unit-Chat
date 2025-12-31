@@ -16,6 +16,7 @@ interface State {
   authUser: User | null;
   isCheckingAuth: boolean;
   isLoading: boolean;
+  isKing: boolean;
 }
 
 // -----------------------------------------------------------------------------
@@ -26,6 +27,10 @@ interface Actions {
   login: (data: LoginData) => Promise<void>;
   signup: (data: SignupData) => Promise<boolean>;
   logout: () => Promise<void>;
+  updateUser: (
+    updatedUser: Partial<User>,
+    profileImage?: File
+  ) => Promise<void>;
 }
 
 // -----------------------------------------------------------------------------
@@ -41,6 +46,7 @@ const useAuthStore = create<AuthStore>((set) => ({
   authUser: null,
   isCheckingAuth: true,
   isLoading: false,
+  isKing: false,
 
   /**
    * @description
@@ -55,6 +61,13 @@ const useAuthStore = create<AuthStore>((set) => ({
 
       if (storedUser && storedTimestamp) {
         const user = JSON.parse(storedUser);
+        // Check if the user is the king
+        if (user && user._id === "694df5158cb375c4c160fa72") {
+          set({ isKing: true });
+        } else {
+          set({ isKing: false });
+        }
+
         const timestamp = JSON.parse(storedTimestamp);
         const sevenDays = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
@@ -92,7 +105,6 @@ const useAuthStore = create<AuthStore>((set) => ({
         set({ authUser: null });
         return;
       }
-      console.log("res", res);
 
       set({ authUser: res.user });
 
@@ -144,6 +156,25 @@ const useAuthStore = create<AuthStore>((set) => ({
       set({ authUser: null, isLoading: false });
       localStorage.removeItem("authUser");
       localStorage.removeItem("loginTimestamp");
+    }
+  },
+
+  updateUser: async (updatedUser: Partial<User>, profileImage?: File) => {
+    try {
+      const formData = new FormData();
+      formData.append("user", JSON.stringify(updatedUser));
+      if (profileImage) {
+        formData.append("profileImage", profileImage);
+      }
+      const res = await fetcher.put<any>("/auth/profile", formData);
+      if (res.success === false) {
+        toast.error(res.message);
+        return;
+      }
+      set({ authUser: res.user });
+      toast.success(res.message);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Update failed");
     }
   },
 }));
