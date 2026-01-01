@@ -2,27 +2,13 @@ import { create } from "zustand";
 import fetcher from "../lib/fetch"; // Our custom fetch wrapper
 import type { User, LoginData, SignupData } from "../types"; // Type definitions for User, LoginData, etc.
 import { toast } from "react-hot-toast"; // For displaying nice notifications to the user
+import useChatStore from "./useChatStore";
 
-/**
- * @description
- * This file sets up our authentication store using Zustand.
- * It manually handles persistence to localStorage, including a 7-day session expiration.
- */
-
-// -----------------------------------------------------------------------------
-// 1. State Definition
-// -----------------------------------------------------------------------------
-interface State {
+interface AuthStore {
   authUser: User | null;
   isCheckingAuth: boolean;
   isLoading: boolean;
   isKing: boolean;
-}
-
-// -----------------------------------------------------------------------------
-// 2. Actions Definition
-// -----------------------------------------------------------------------------
-interface Actions {
   checkAuth: () => void; // This is now a synchronous function that checks localStorage first.
   login: (data: LoginData) => Promise<void>;
   signup: (data: SignupData) => Promise<boolean>;
@@ -33,14 +19,6 @@ interface Actions {
   ) => Promise<void>;
 }
 
-// -----------------------------------------------------------------------------
-// 3. Combine State and Actions
-// -----------------------------------------------------------------------------
-type AuthStore = State & Actions;
-
-// -----------------------------------------------------------------------------
-// 4. Create the Zustand Store
-// -----------------------------------------------------------------------------
 const useAuthStore = create<AuthStore>((set) => ({
   // Initial state values
   authUser: null,
@@ -80,6 +58,7 @@ const useAuthStore = create<AuthStore>((set) => ({
         } else {
           // Session is valid, restore it
           set({ authUser: user });
+          useChatStore.getState().connectSocket();
         }
       }
     } catch (error) {
@@ -100,6 +79,8 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const res = await fetcher.post<any>("/auth/login", data);
+      console.log("res", res.user);
+
       if (res.success === false) {
         toast.error(res.message);
         set({ authUser: null });
@@ -107,6 +88,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       }
 
       set({ authUser: res.user });
+      useChatStore.getState().connectSocket();
 
       // Persist user and timestamp to localStorage
       localStorage.setItem("authUser", JSON.stringify(res.user));
@@ -152,6 +134,7 @@ const useAuthStore = create<AuthStore>((set) => ({
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Logout failed");
     } finally {
+      useChatStore.getState().disconnectSocket();
       // Clear user from store and localStorage
       set({ authUser: null, isLoading: false });
       localStorage.removeItem("authUser");
@@ -166,7 +149,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       if (profileImage) {
         formData.append("profileImage", profileImage);
       }
-      const res = await fetcher.put<any>("/auth/profile", formData);
+      const res = await fetcher.put<any>("/auth/profile-update", formData);
       if (res.success === false) {
         toast.error(res.message);
         return;

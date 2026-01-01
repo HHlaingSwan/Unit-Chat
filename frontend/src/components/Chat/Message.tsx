@@ -19,6 +19,7 @@ interface MessageProps {
 
 const Message: React.FC<MessageProps> = ({ message }) => {
   const { text, senderId, image, createdAt, seen } = message;
+
   const { authUser } = useAuthStore();
   const [isHovered, setIsHovered] = useState(false);
   const [showMenu, setShowMenu] = useState(false);

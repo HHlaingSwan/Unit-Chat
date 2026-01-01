@@ -21,19 +21,18 @@ const MessageInput = () => {
     setPreviewUrl(null);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!text && !image) return;
 
-    sendMessage({
+    await sendMessage({
       text,
       image,
-    }).then(() => {
-      // Reset form only after the message is sent
-      setText("");
-      setImage(null);
-      setPreviewUrl(null);
     });
+    // Reset form only after the message is sent
+    setText("");
+    setImage(null);
+    setPreviewUrl(null);
   };
 
   return (
@@ -80,11 +79,7 @@ const MessageInput = () => {
           className="ml-4 px-4 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700 disabled:bg-indigo-400"
           disabled={isSendingMessage}
         >
-          {isSendingMessage ? (
-            <Loader className="animate-spin" />
-          ) : (
-            <Send />
-          )}
+          {isSendingMessage ? <Loader className="animate-spin" /> : <Send />}
         </button>
       </form>
     </div>

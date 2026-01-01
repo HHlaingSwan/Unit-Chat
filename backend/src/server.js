@@ -6,13 +6,18 @@ import path from "path";
 import cookieParser from "cookie-parser";
 import { envConfig } from "./db/env.js";
 import cors from "cors";
+import { createServer } from "http";
+import initializeSocket from "./socket/socket.js";
 
 const app = express();
-// const __dirname = path.resolve()
+const httpServer = createServer(app);
+const __dirname = path.resolve(); // Get the absolute path of the current directory
 const port = envConfig.port || 3300;
 const url = envConfig.MONGODB_URI;
 
-app.use(express.json()); // Parse JSON request bodies
+initializeSocket(httpServer);
+
+app.use(express.json({ limit: "20mb" })); // Parse JSON request bodies
 app.use(
   cors({
     origin: envConfig.CLIENT_URL,
@@ -34,7 +39,7 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-app.listen(port, async () => {
+httpServer.listen(port, async () => {
   try {
     await connectingDB(url);
   } catch (error) {

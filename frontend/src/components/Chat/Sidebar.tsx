@@ -7,6 +7,7 @@ import type { User } from "../../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { formatLastSeen } from "../../lib/utils";
 
 const UserSkeleton = () => {
   return (
@@ -18,8 +19,14 @@ const UserSkeleton = () => {
 };
 
 const Sidebar = () => {
-  const { users, selectUser, selectedUser, isUsersLoading, getUsers } =
-    useChatStore();
+  const {
+    users,
+    selectUser,
+    selectedUser,
+    isUsersLoading,
+    getUsers,
+    onlineUsers,
+  } = useChatStore();
   const { authUser, logout, updateUser, isKing } = useAuthStore();
   const navigate = useNavigate();
 
@@ -59,11 +66,15 @@ const Sidebar = () => {
         className="relative flex items-center gap-4 p-3 rounded-md cursor-pointer hover:bg-white/10"
         onClick={() => setProfileDialogOpen(true)}
       >
-        <img
-          src={authUser?.profileImage || "login.png"} // Use a default avatar if none is present
-          alt={authUser?.username}
-          className="w-12 h-12 rounded-full"
-        />
+        <div className="relative">
+          <img
+            src={authUser?.profileImage || "login.png"} // Use a default avatar if none is present
+            alt={authUser?.username}
+            className="w-12 h-12 rounded-full"
+          />
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+        </div>
+
         <div className="flex-1">
           <h3 className="text-lg font-semibold truncate">
             {authUser?.username}
@@ -94,33 +105,48 @@ const Sidebar = () => {
           ? [...Array(5)].map((_, i) => <UserSkeleton key={i} />)
           : users
               .filter((user) => user.username !== authUser?.username) // Don't show the current user in the conversations list
-              .map((user) => (
-                <li
-                  key={user._id}
-                  className={`flex items-center p-2 mb-2 rounded-lg ${
-                    selectedUser?._id === user._id
-                      ? "bg-white/20 cursor-default"
-                      : "hover:bg-white/10 cursor-pointer"
-                  }`}
-                  onClick={() =>
-                    selectedUser?._id !== user._id && selectUser(user)
-                  }
-                >
-                  <img
-                    src={user.profileImage || "/login.png"} // Use a default avatar if none is present
-                    alt={user.username}
-                    className="w-10 h-10 rounded-full mr-4"
-                  />
-                  <span>
-                    {user.username}
-                    {user._id === "694df5158cb375c4c160fa72" && (
-                      <span className="text-blue-700 ml-2">
-                        <Crown className="inline-block w-6 h-6 " />
+              .map((user) => {
+                const isOnline = onlineUsers.includes(user._id);
+                return (
+                  <li
+                    key={user._id}
+                    className={`flex items-center p-2 mb-2 rounded-lg ${
+                      selectedUser?._id === user._id
+                        ? "bg-white/20 cursor-default"
+                        : "hover:bg-white/10 cursor-pointer"
+                    }`}
+                    onClick={() =>
+                      selectedUser?._id !== user._id && selectUser(user)
+                    }
+                  >
+                    <div className="relative">
+                      <img
+                        src={user.profileImage || "/login.png"} // Use a default avatar if none is present
+                        alt={user.username}
+                        className="w-10 h-10 rounded-full mr-4"
+                      />
+                      {isOnline && (
+                        <div className="absolute bottom-0 right-4 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                      )}
+                    </div>
+                    <div>
+                      <span>
+                        {user.username}
+                        {user._id === "694df5158cb375c4c160fa72" && (
+                          <span className="text-blue-700 ml-2">
+                            <Crown className="inline-block w-6 h-6 " />
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </span>
-                </li>
-              ))}
+                      {!isOnline && user.lastSeen && (
+                        <p className="text-xs text-gray-400">
+                          {formatLastSeen(user.lastSeen)}
+                        </p>
+                      )}
+                    </div>
+                  </li>
+                );
+              })}
       </ul>
 
       {/* Profile Dialog */}

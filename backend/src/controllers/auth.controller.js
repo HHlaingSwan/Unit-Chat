@@ -53,12 +53,15 @@ export const signUp = async (req, res) => {
     // TODO: Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const genRandomNum = Math.floor(Math.random() * 101);
+    const TempoAvatar = `https://avatar.iran.liara.run/public/${genRandomNum}`;
 
     // TODO: Create user
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
+      profileImage: TempoAvatar,
     });
     if (!newUser) {
       return res.status(400).json({ message: "User not created" });
@@ -70,13 +73,13 @@ export const signUp = async (req, res) => {
       res.status(201).json({
         success: true,
         message: "User created successfully",
-        accessToken: token,
-        // user: {
-        //   _id: savedUser._id,
-        //   username: savedUser.username,
-        //   email: savedUser.email,
-        //   profileImage: savedUser.profileImage,
-        // },
+        user: {
+          // accessToken: token,
+          _id: savedUser._id,
+          username: savedUser.username,
+          email: savedUser.email,
+          profileImage: savedUser.profileImage,
+        },
       });
       // Send welcome email asynchronously and do NOT fail signup if email sending fails.
       // Many email providers (like Resend) may reject messages during development

@@ -4,6 +4,7 @@ export interface User {
   email: string;
   profileImage?: string;
   isActive: boolean;
+  lastSeen: string;
 }
 
 export interface Message {

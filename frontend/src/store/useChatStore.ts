@@ -2,24 +2,32 @@ import { create } from "zustand";
 import fetcher from "../lib/fetch";
 import type { User, Message, NewMessage } from "../types";
 import toast from "react-hot-toast";
+import { io, Socket } from "socket.io-client";
+import useAuthStore from "./useAuthStore";
 
 interface ChatState {
+  socket: Socket | null;
   users: User[];
   selectedUser: User | null;
   messages: Message[];
   isLoadingMessages: boolean;
   isUsersLoading: boolean;
   isSendingMessage: boolean;
+  onlineUsers: string[];
   selectUser: (user: User) => void;
   getUsers: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
-  sendMessage: (message: NewMessage) => Promise<void>;
+  sendMessage: (message: NewMessage) => void;
+  connectSocket: () => void;
+  disconnectSocket: () => void;
 }
 
 const useChatStore = create<ChatState>((set, get) => ({
+  socket: null,
   users: [],
   isUsersLoading: false,
   isSendingMessage: false,
+  onlineUsers: [],
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -51,27 +59,57 @@ const useChatStore = create<ChatState>((set, get) => ({
     set({ selectedUser: user });
     get().getMessages(user._id);
   },
-  sendMessage: async (message) => {
-    set({ isSendingMessage: true });
-    try {
-      const formData = new FormData();
-      if (message.text) {
-        formData.append("text", message.text);
+  sendMessage: (message) => {
+    const { socket, selectedUser } = get();
+    if (!socket || !selectedUser) return;
+    const authUser = useAuthStore.getState().authUser;
+    if (!authUser) return;
+
+    socket.emit("sendMessage", {
+      ...message,
+      receiverId: selectedUser._id,
+      senderId: authUser._id,
+    });
+  },
+  connectSocket: () => {
+    const authUser = useAuthStore.getState().authUser;
+    if (!authUser) return;
+
+    const url =
+      import.meta.env.MODE === "development" ? "http://localhost:5500" : "/";
+
+    const newSocket = io(url, {
+      query: {
+        userId: authUser._id,
+      },
+    });
+
+    set({ socket: newSocket });
+
+    newSocket.on("getOnlineUsers", (users) => {
+      set({ onlineUsers: users });
+    });
+
+    newSocket.on("newMessage", (message) => {
+      const selectedUser = get().selectedUser;
+      if (
+        selectedUser &&
+        (selectedUser._id === message.senderId ||
+          selectedUser._id === message.receiverId)
+      ) {
+        set((state) => ({
+          messages: [...state.messages, message],
+        }));
+      } else {
+        toast.success(`New message received`);
       }
-      if (message.image) {
-        formData.append("image", message.image);
-      }
-      const res = await fetcher.post<Message>(
-        `/message/send/${get().selectedUser?._id}`,
-        formData
-      );
-      set((state) => ({
-        messages: [...state.messages, res],
-      }));
-    } catch (error) {
-      console.error("Error sending message:", error);
-    } finally {
-      set({ isSendingMessage: false });
+    });
+  },
+  disconnectSocket: () => {
+    const { socket } = get();
+    if (socket) {
+      socket.disconnect();
+      set({ socket: null });
     }
   },
 }));
