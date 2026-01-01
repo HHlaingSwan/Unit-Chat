@@ -7,6 +7,7 @@ import {
 } from "../controllers/auth.controller.js";
 import { requireAuth } from "../middleware/auth.middleware.js";
 import { arcjetMiddleware } from "../middleware/arcjet.middleware.js";
+import upload from "../middleware/multer.middleware.js";
 
 const authRouter = Router();
 
@@ -19,7 +20,12 @@ authRouter.get("/test", arcjetMiddleware, (req, res) => {
 authRouter.post("/signup", signUp);
 authRouter.post("/login", signIn);
 authRouter.post("/logout", signOut);
-authRouter.post("/profile-update", requireAuth, updateProfile);
+authRouter.post(
+  "/profile",
+  requireAuth,
+  upload.single("profileImage"),
+  updateProfile
+);
 authRouter.get("/protected", requireAuth, (req, res) =>
   res
     .status(200)

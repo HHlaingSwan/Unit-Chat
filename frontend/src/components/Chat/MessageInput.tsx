@@ -36,7 +36,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 border-t border-white/20">
+    <div className="p-2 border-t  border-white/20">
       {previewUrl && (
         <div className="relative w-32 h-32 mb-4">
           <img
@@ -54,8 +54,14 @@ const MessageInput = () => {
         </div>
       )}
       <form onSubmit={handleSubmit} className="flex items-center">
-        <label htmlFor="file-upload" className="cursor-pointer mr-4">
-          <Link className="h-6 w-6 text-gray-400 hover:text-white" />
+        <label htmlFor="file-upload" className="cursor-pointer mr-2 md:mr-4">
+          <Link
+            className={`h-5 w-5 md:h-6 md:w-6 ${
+              text
+                ? "text-gray-600 cursor-not-allowed"
+                : "text-gray-400 hover:text-white"
+            }`}
+          />
           <input
             id="file-upload"
             name="file-upload"
@@ -63,7 +69,7 @@ const MessageInput = () => {
             className="sr-only"
             accept="image/*"
             onChange={handleImageChange}
-            disabled={isSendingMessage}
+            disabled={isSendingMessage || !!text}
           />
         </label>
         <input
@@ -71,15 +77,19 @@ const MessageInput = () => {
           placeholder="Type a message..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          className="flex-1 p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          disabled={isSendingMessage}
+          className="flex-1 p-2 md:p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-800 disabled:cursor-not-allowed"
+          disabled={isSendingMessage || !!image}
         />
         <button
           type="submit"
-          className="ml-4 px-4 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700 disabled:bg-indigo-400"
-          disabled={isSendingMessage}
+          className="ml-2 md:ml-4 px-3 py-2 bg-indigo-600 rounded-lg text-white font-semibold hover:bg-indigo-700 disabled:bg-indigo-400"
+          disabled={isSendingMessage || (!text && !image)}
         >
-          {isSendingMessage ? <Loader className="animate-spin" /> : <Send />}
+          {isSendingMessage ? (
+            <Loader className="h-5 w-5 md:h-6 md:w-6 animate-spin" />
+          ) : (
+            <Send className="h-5 w-5 md:h-6 md:w-6" />
+          )}
         </button>
       </form>
     </div>

@@ -149,7 +149,7 @@ const useAuthStore = create<AuthStore>((set) => ({
       if (profileImage) {
         formData.append("profileImage", profileImage);
       }
-      const res = await fetcher.put<any>("/auth/profile-update", formData);
+      const res = await fetcher.post<any>("/auth/profile", formData);
       if (res.success === false) {
         toast.error(res.message);
         return;

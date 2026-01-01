@@ -85,14 +85,16 @@ const Message: React.FC<MessageProps> = ({ message }) => {
               isSender ? "flex-row-reverse" : ""
             }`}
           >
-            <div className={`p-3 max-w-lg ${bubbleClass}`}>
+            <div
+              className={`p-2 md:p-3 max-w-full md:max-w-lg overflow-hidden ${bubbleClass}`}
+            >
               {image && (
                 <Dialog open={open} onOpenChange={setOpen}>
                   <DialogTrigger asChild>
                     <img
                       src={image}
                       alt="Chat"
-                      className="rounded-lg max-w-xs cursor-pointer"
+                      className="rounded-lg max-w-37.5 md:max-w-xs cursor-pointer"
                     />
                   </DialogTrigger>
                   <DialogContent className="p-0 border-none bg-transparent max-w-[90vw] max-h-[90vh]">
@@ -112,7 +114,7 @@ const Message: React.FC<MessageProps> = ({ message }) => {
               )}
               {text && (
                 <p
-                  className={`py-1 px-2 ${
+                  className={`py-1 px-2 text-sm md:text-base ${
                     isSender ? "text-right" : "text-left"
                   }`}
                 >

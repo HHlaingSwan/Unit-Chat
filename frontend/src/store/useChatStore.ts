@@ -14,7 +14,10 @@ interface ChatState {
   isUsersLoading: boolean;
   isSendingMessage: boolean;
   onlineUsers: string[];
+  viewingUserProfile: User | null;
   selectUser: (user: User) => void;
+  unselectUser: () => void;
+  setViewedUserProfile: (user: User | null) => void;
   getUsers: () => Promise<void>;
   getMessages: (userId: string) => Promise<void>;
   sendMessage: (message: NewMessage) => void;
@@ -28,6 +31,7 @@ const useChatStore = create<ChatState>((set, get) => ({
   isUsersLoading: false,
   isSendingMessage: false,
   onlineUsers: [],
+  viewingUserProfile: null,
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -56,8 +60,14 @@ const useChatStore = create<ChatState>((set, get) => ({
     }
   },
   selectUser: (user) => {
-    set({ selectedUser: user });
+    set({ selectedUser: user, viewingUserProfile: null }); // Ensure profile view is closed when a new user is selected
     get().getMessages(user._id);
+  },
+  unselectUser: () => {
+    set({ selectedUser: null, messages: [] });
+  },
+  setViewedUserProfile: (user) => {
+    set({ viewingUserProfile: user });
   },
   sendMessage: (message) => {
     const { socket, selectedUser } = get();

@@ -26,7 +26,7 @@ const Login = () => {
   return (
     <AuthLayout imageUrl="/login.png">
       <motion.h1
-        className="mb-4 text-center text-3xl font-extrabold text-gray-800"
+        className="mb-4 text-center text-3xl font-extrabold text-white"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -34,7 +34,7 @@ const Login = () => {
         Welcome Back!
       </motion.h1>
       <motion.p
-        className="mb-6 text-center text-gray-600"
+        className="mb-6 text-center text-gray-300"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
@@ -59,7 +59,7 @@ const Login = () => {
             type="email"
             autoComplete="email"
             required
-            className="mt-1 block w-full p-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full p-4 rounded-md border-gray-500 bg-gray-700/50 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             value={email}
             placeholder="Enter your email"
             onChange={(e) => setEmail(e.target.value)}
@@ -77,7 +77,7 @@ const Login = () => {
             autoComplete="current-password"
             required
             placeholder="Enter you password"
-            className="mt-1 block w-full p-4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full p-4 rounded-md border-gray-500 bg-gray-700/50 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -94,7 +94,7 @@ const Login = () => {
         </motion.button>
       </motion.form>
       <motion.p
-        className="mt-6 text-center text-sm text-gray-600"
+        className="mt-6 text-center text-sm text-gray-300"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.5 }}
@@ -102,7 +102,7 @@ const Login = () => {
         Don't have an account?{" "}
         <Link
           to="/signup"
-          className="font-medium text-indigo-600 hover:text-indigo-500"
+          className="font-medium text-indigo-400 hover:text-indigo-300"
         >
           Sign Up
         </Link>

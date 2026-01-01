@@ -146,28 +146,57 @@ export const signOut = (_, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  const { profileImage } = req.body;
   try {
-    if (!profileImage) {
-      return res.status(400).json({ message: "Profile image is required!" });
-    }
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+    const { user: userDataString } = req.body;
+    const profileImageFile = req.file;
     const userId = req.user._id;
-    const uploadResponse = await cloudinary.uploader.upload(profileImage);
-    if (!uploadResponse || !uploadResponse.secure_url) {
-      return res.status(400).json({ message: "Profile image upload failed!" });
+
+    if (!userDataString && !profileImageFile) {
+      return res.status(400).json({ message: "No update data provided." });
     }
-    const updateUser = await User.findByIdAndUpdate(
-      userId,
-      { profileImage: uploadResponse.secure_url },
-      { new: true }
-    ).select("-password");
+
+    const updateData = {};
+
+    // Handle text data update
+    if (userDataString) {
+      const userData = JSON.parse(userDataString);
+      // Add any fields from userData that are allowed to be updated
+      if (userData.username) {
+        updateData.username = userData.username;
+      }
+      // Add other fields as necessary, e.g., email, etc.
+    }
+
+    // Handle image upload
+    if (profileImageFile) {
+      // Convert buffer to data URI for Cloudinary
+      const b64 = Buffer.from(profileImageFile.buffer).toString("base64");
+      const dataURI = "data:" + profileImageFile.mimetype + ";base64," + b64;
+      const uploadResponse = await cloudinary.uploader.upload(dataURI, {
+        folder: "chat-app-profiles",
+      });
+
+      if (uploadResponse && uploadResponse.secure_url) {
+        updateData.profileImage = uploadResponse.secure_url;
+      } else {
+        return res
+          .status(500)
+          .json({ message: "Image upload to Cloudinary failed." });
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return res.status(400).json({ message: "No valid update data found." });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true,
+    }).select("-password");
+
     res.status(200).json({
       success: true,
-      message: "Profile image updated successfully",
-      user: updateUser,
+      message: "Profile updated successfully",
+      user: updatedUser,
     });
   } catch (error) {
     console.log("Error in updateProfile:", error);

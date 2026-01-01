@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import useChatStore from "../../store/useChatStore";
 import useAuthStore from "../../store/useAuthStore";
-import { Crown, LogOut } from "lucide-react";
+import { Crown } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { User } from "../../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -60,7 +60,7 @@ const Sidebar = () => {
   }, [getUsers]);
 
   return (
-    <div className="flex flex-col w-1/4 border-r border-white/20 p-4">
+    <div className="flex flex-col border-r border-white/20  h-full w-full p-4">
       {/* User Profile Section */}
       <div
         className="relative flex items-center gap-4 p-3 rounded-md cursor-pointer hover:bg-white/10"
@@ -68,48 +68,36 @@ const Sidebar = () => {
       >
         <div className="relative">
           <img
-            src={authUser?.profileImage || "login.png"} // Use a default avatar if none is present
+            src={authUser?.profileImage || "login.png"}
             alt={authUser?.username}
             className="w-12 h-12 rounded-full"
           />
           <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
         </div>
-
         <div className="flex-1">
           <h3 className="text-lg font-semibold truncate">
             {authUser?.username}
             {isKing && (
-              <span className="text-blue-700 ml-2">
+              <span className="text-yellow-400 ml-2">
                 <Crown className="inline-block w-6 h-6 " />
               </span>
             )}
           </h3>
         </div>
-
-        {/* Logout IconButton positioned at top-right of the profile card */}
-        <button
-          onClick={handleLogout}
-          className="absolute right-3  cursor-pointer top-3 p-2 rounded-full hover:bg-white/10"
-          title="Logout"
-          aria-label="Logout"
-        >
-          <LogOut />
-        </button>
       </div>
-      <div className="border-b border-white/20 w-full  mb-4"></div>
 
       {/* Conversations List */}
-      <h2 className="text-xl font-bold mb-4">Conversations</h2>
-      <ul className="flex-1 overflow-y-auto ">
+      <h2 className="text-xl font-bold my-4">Conversations</h2>
+      <ul className="flex-1 overflow-y-auto">
         {isUsersLoading
-          ? [...Array(5)].map((_, i) => <UserSkeleton key={i} />)
+          ? [...Array(5)].map((_, i) => <UserSkeleton key={`skeleton-${i}`} />)
           : users
-              .filter((user) => user.username !== authUser?.username) // Don't show the current user in the conversations list
+              .filter((user) => user.username !== authUser?.username)
               .map((user) => {
                 const isOnline = onlineUsers.includes(user._id);
                 return (
                   <li
-                    key={user._id}
+                    key={`${user.email}-${user._id}`}
                     className={`flex items-center p-2 mb-2 rounded-lg ${
                       selectedUser?._id === user._id
                         ? "bg-white/20 cursor-default"
@@ -121,7 +109,7 @@ const Sidebar = () => {
                   >
                     <div className="relative">
                       <img
-                        src={user.profileImage || "/login.png"} // Use a default avatar if none is present
+                        src={user.profileImage || "/login.png"}
                         alt={user.username}
                         className="w-10 h-10 rounded-full mr-4"
                       />
@@ -130,10 +118,10 @@ const Sidebar = () => {
                       )}
                     </div>
                     <div>
-                      <span>
+                      <span className="font-semibold">
                         {user.username}
-                        {user._id === "694df5158cb375c4c160fa72" && (
-                          <span className="text-blue-700 ml-2">
+                        {user?._id === "694df5158cb375c4c160fa72" && (
+                          <span className="text-yellow-400 ml-2">
                             <Crown className="inline-block w-6 h-6 " />
                           </span>
                         )}
@@ -179,6 +167,7 @@ const Sidebar = () => {
                 />
                 <Input
                   value={username}
+                  disabled
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setUsername(e.target.value)
                   }
@@ -197,7 +186,14 @@ const Sidebar = () => {
               <>
                 <h2 className="text-2xl font-bold">{authUser?.username}</h2>
                 <p className="text-gray-500">{authUser?.email}</p>
-                <Button onClick={() => setIsEditingProfile(true)}>Edit</Button>
+                <div className="flex gap-2">
+                  <Button onClick={() => setIsEditingProfile(true)}>
+                    Edit
+                  </Button>
+                  <Button onClick={handleLogout} variant="destructive">
+                    Logout
+                  </Button>
+                </div>
               </>
             )}
           </div>
