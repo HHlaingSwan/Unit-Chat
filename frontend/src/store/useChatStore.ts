@@ -54,9 +54,10 @@ const useChatStore = create<ChatState>((set, get) => ({
   getMessages: async (userId) => {
     set({ isLoadingMessages: true });
     try {
-      const res = await fetcher.get<{ messages: Message[]; isContact: boolean }>(
-        `/message/${userId}`
-      );
+      const res = await fetcher.get<{
+        messages: Message[];
+        isContact: boolean;
+      }>(`/message/${userId}`);
       set({ messages: res.messages, isContact: res.isContact });
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -110,7 +111,9 @@ const useChatStore = create<ChatState>((set, get) => ({
     if (!authUser) return;
 
     const url =
-      import.meta.env.MODE === "development" ? "http://localhost:5500" : "/";
+      import.meta.env.MODE === "development"
+        ? "http://localhost:5500"
+        : import.meta.env.VITE_API_BASE_URL;
 
     const newSocket = io(url, {
       query: {
