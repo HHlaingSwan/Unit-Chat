@@ -136,7 +136,12 @@ const useAuthStore = create<AuthStore>((set) => ({
     } finally {
       useChatStore.getState().disconnectSocket();
       // Clear user from store and localStorage
-      set({ authUser: null, isLoading: false });
+      set({
+        authUser: null,
+        isLoading: false,
+        isCheckingAuth: false,
+        isKing: false,
+      });
       localStorage.removeItem("authUser");
       localStorage.removeItem("loginTimestamp");
     }

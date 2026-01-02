@@ -1,7 +1,7 @@
 import { useEffect, useState, type ChangeEvent } from "react";
 import useChatStore from "../../store/useChatStore";
 import useAuthStore from "../../store/useAuthStore";
-import { Crown } from "lucide-react";
+import { ChessQueen, Crown } from "lucide-react";
 import { useNavigate } from "react-router";
 import type { User } from "../../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
@@ -82,6 +82,11 @@ const Sidebar = () => {
                 <Crown className="inline-block w-6 h-6 " />
               </span>
             )}
+            {authUser?._id === "694df3fbe6d1929abe5e2164" && (
+              <span className="text-yellow-400 ml-2">
+                <ChessQueen className="inline-block w-6 h-6 " />
+              </span>
+            )}
           </h3>
         </div>
       </div>
@@ -123,6 +128,11 @@ const Sidebar = () => {
                         {user?._id === "694df5158cb375c4c160fa72" && (
                           <span className="text-yellow-400 ml-2">
                             <Crown className="inline-block w-6 h-6 " />
+                          </span>
+                        )}
+                        {user?._id === "694df3fbe6d1929abe5e2164" && (
+                          <span className="text-yellow-400 ml-2">
+                            <ChessQueen className="inline-block w-6 h-6 " />
                           </span>
                         )}
                       </span>

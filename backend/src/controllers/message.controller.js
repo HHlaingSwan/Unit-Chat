@@ -18,19 +18,23 @@ export const getAllContents = async (req, res) => {
 export const getMessageByUserId = async (req, res) => {
   try {
     const myId = req.user._id;
-    const { id: userToChat } = req.params;
+    const { id: userToChatId } = req.params;
 
-    // Find messages between the logged-in user and the requested user.
-    // Sorting by `createdAt: 1` returns messages in chronological order.
-    // If you want sender/receiver details inline, add `.populate('senderId', 'fullName profileImage')`
+    const loggedInUser = await User.findById(myId);
+    if (!loggedInUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isContact = loggedInUser.contacts.includes(userToChatId);
+
     const messages = await Message.find({
       $or: [
-        { senderId: myId, receiverId: userToChat },
-        { senderId: userToChat, receiverId: myId },
+        { senderId: myId, receiverId: userToChatId },
+        { senderId: userToChatId, receiverId: myId },
       ],
     }).sort({ createdAt: 1 });
 
-    return res.status(200).json(messages);
+    return res.status(200).json({ messages, isContact });
   } catch (error) {
     console.error("Error in getMessageByUserId:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -55,6 +59,19 @@ export const sendMessage = async (req, res) => {
     const receiver = await User.findById(receiverId);
     if (!receiver) {
       return res.status(404).json({ message: "Receiver not found" });
+    }
+
+    const sender = await User.findById(senderId);
+    if (!sender) {
+      return res.status(404).json({ message: "Sender not found" });
+    }
+
+    if (receiver.blocked.includes(senderId)) {
+      return res.status(403).json({ message: "You are blocked by this user" });
+    }
+
+    if (sender.blocked.includes(receiverId)) {
+      return res.status(403).json({ message: "You have blocked this user" });
     }
 
     // Upload image to Cloudinary if provided. `image` is expected to be a data URL

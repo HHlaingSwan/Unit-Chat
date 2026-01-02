@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import useChatStore from "../../store/useChatStore";
 import useAuthStore from "../../store/useAuthStore";
 import { formatLastSeen } from "../../lib/utils";
-import { Crown } from "lucide-react";
+import { ChessQueen, Crown } from "lucide-react";
 
 const UserSkeleton = () => {
   return (
@@ -14,7 +14,14 @@ const UserSkeleton = () => {
 };
 
 const ChatsView = () => {
-  const { users, selectUser, selectedUser, isUsersLoading, getUsers, onlineUsers } = useChatStore();
+  const {
+    users,
+    selectUser,
+    selectedUser,
+    isUsersLoading,
+    getUsers,
+    onlineUsers,
+  } = useChatStore();
   const { authUser } = useAuthStore();
 
   useEffect(() => {
@@ -57,8 +64,13 @@ const ChatsView = () => {
                       <span className="font-semibold">
                         {user.username}
                         {user._id === "694df5158cb375c4c160fa72" && (
-                          <span className="text-blue-700 ml-2">
+                          <span className="text-yellow-400 ml-2">
                             <Crown className="inline-block w-6 h-6" />
+                          </span>
+                        )}
+                        {user?._id === "694df3fbe6d1929abe5e2164" && (
+                          <span className="text-yellow-400 ml-2">
+                            <ChessQueen className="inline-block w-6 h-6 " />
                           </span>
                         )}
                       </span>

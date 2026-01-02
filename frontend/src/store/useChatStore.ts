@@ -15,6 +15,7 @@ interface ChatState {
   isSendingMessage: boolean;
   onlineUsers: string[];
   viewingUserProfile: User | null;
+  isContact: boolean;
   selectUser: (user: User) => void;
   unselectUser: () => void;
   setViewedUserProfile: (user: User | null) => void;
@@ -23,6 +24,8 @@ interface ChatState {
   sendMessage: (message: NewMessage) => void;
   connectSocket: () => void;
   disconnectSocket: () => void;
+  acceptContact: (userId: string) => Promise<void>;
+  blockContact: (userId: string) => Promise<void>;
 }
 
 const useChatStore = create<ChatState>((set, get) => ({
@@ -32,6 +35,7 @@ const useChatStore = create<ChatState>((set, get) => ({
   isSendingMessage: false,
   onlineUsers: [],
   viewingUserProfile: null,
+  isContact: false,
   getUsers: async () => {
     set({ isUsersLoading: true });
     try {
@@ -50,11 +54,13 @@ const useChatStore = create<ChatState>((set, get) => ({
   getMessages: async (userId) => {
     set({ isLoadingMessages: true });
     try {
-      const res = await fetcher.get<Message[]>(`/message/${userId}`);
-      set({ messages: res });
+      const res = await fetcher.get<{ messages: Message[]; isContact: boolean }>(
+        `/message/${userId}`
+      );
+      set({ messages: res.messages, isContact: res.isContact });
     } catch (error) {
       console.error("Error fetching messages:", error);
-      set({ messages: [] });
+      set({ messages: [], isContact: false });
     } finally {
       set({ isLoadingMessages: false });
     }
@@ -80,6 +86,24 @@ const useChatStore = create<ChatState>((set, get) => ({
       receiverId: selectedUser._id,
       senderId: authUser._id,
     });
+  },
+  acceptContact: async (userId: string) => {
+    try {
+      await fetcher.post(`/user/accept/${userId}`, {});
+      set({ isContact: true });
+      toast.success("User accepted");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to accept user");
+    }
+  },
+  blockContact: async (userId: string) => {
+    try {
+      await fetcher.post(`/user/block/${userId}`, {});
+      set({ isContact: false }); // or handle as blocked
+      toast.success("User blocked");
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to block user");
+    }
   },
   connectSocket: () => {
     const authUser = useAuthStore.getState().authUser;

@@ -133,11 +133,11 @@ const Message: React.FC<MessageProps> = ({ message }) => {
                 </button>
                 {showMenu && (
                   <div className="absolute top-full right-0 bg-white border rounded-md shadow-lg z-10 flex flex-col">
-                    <button className="flex items-center gap-2 w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100">
+                    <button className="flex items-center gap-2 w-full px-4 py-2  rounded-md text-left text-sm text-gray-700 hover:bg-gray-100">
                       <FiEdit size={16} />
                       <span>Edit</span>
                     </button>
-                    <button className="flex items-center gap-2 w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
+                    <button className="flex items-center gap-2 w-full rounded-md px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100">
                       <FiTrash size={16} />
                       <span>Delete</span>
                     </button>

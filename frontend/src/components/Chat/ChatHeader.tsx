@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useChatStore from "../../store/useChatStore";
-import { Crown, ArrowLeft } from "lucide-react";
+import { Crown, ArrowLeft, ChessQueen } from "lucide-react";
 import { formatLastSeen } from "../../lib/utils";
 
 const ChatHeader = () => {
@@ -50,6 +50,11 @@ const ChatHeader = () => {
           {selectedUser?._id === "694df5158cb375c4c160fa72" && (
             <span className="text-yellow-400 ml-2">
               <Crown className="inline-block w-6 h-6 " />
+            </span>
+          )}
+          {selectedUser?._id === "694df3fbe6d1929abe5e2164" && (
+            <span className="text-yellow-400 ml-2">
+              <ChessQueen className="inline-block w-6 h-6 " />
             </span>
           )}
         </h2>

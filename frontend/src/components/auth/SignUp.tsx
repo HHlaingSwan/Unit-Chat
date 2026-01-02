@@ -56,6 +56,7 @@ const SignUp = () => {
             type="text"
             autoComplete="username"
             required
+            maxLength={22}
             className="mt-1 block w-full p-4 rounded-md border-gray-500 bg-gray-700/50 text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             value={username}
             placeholder="Enter your username"

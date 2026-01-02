@@ -2,6 +2,7 @@ import express from "express";
 import { connectingDB } from "./db/connectDB.js";
 import authRouter from "./routes/auth.route.js";
 import messageRouter from "./routes/message.route.js";
+import userRouter from "./routes/user.route.js";
 import path from "path";
 import cookieParser from "cookie-parser";
 import { envConfig } from "./db/env.js";
@@ -30,6 +31,7 @@ app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
+app.use("/api/user", userRouter);
 
 // for production mode
 if (process.env.NODE_ENV === "production") {
