@@ -11,9 +11,12 @@ import { formatLastSeen } from "../../lib/utils";
 
 const UserSkeleton = () => {
   return (
-    <div className="flex items-center p-2 mb-2 rounded-lg">
-      <div className="h-10 w-10 bg-slate-800 rounded-full mr-4 animate-pulse" />
-      <div className="h-4 w-24 bg-slate-800 rounded animate-pulse" />
+    <div className="flex items-center gap-4 p-2 mb-2 rounded-lg">
+      <div className="skeleton w-12 h-12 rounded-full shrink-0" />
+      <div className="flex flex-col gap-2 w-full">
+        <div className="skeleton h-4 w-3/4 rounded" />
+        <div className="skeleton h-3 w-1/2 rounded" />
+      </div>
     </div>
   );
 };

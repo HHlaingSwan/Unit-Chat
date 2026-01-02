@@ -1,11 +1,14 @@
 import { useRef, useEffect } from "react";
 import Message from "./Message";
 import useChatStore from "../../store/useChatStore";
+import EmptyImage from "../../assets/Empty.png";
 
 const MessageSkeleton = ({ isSender }: { isSender: boolean }) => {
   const skeletonWidths = ["w-48", "w-40", "w-32", "w-24"];
-  const width1 = skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)];
-  const width2 = skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)];
+  const width1 =
+    skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)];
+  const width2 =
+    skeletonWidths[Math.floor(Math.random() * skeletonWidths.length)];
 
   return (
     <div
@@ -56,7 +59,7 @@ const MessageList = () => {
           <p className=" text-2xl font-medium"> No Messages Yet</p>
 
           <img
-            src="Empty.png"
+            src={EmptyImage}
             alt="empty chat"
             className="w-32 max-w-full h-auto  object-contain"
             style={{ minWidth: "420px" }}

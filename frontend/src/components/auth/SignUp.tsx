@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import useAuthStore from "../../store/useAuthStore";
 import AuthLayout from "./AuthLayout";
 import { motion } from "framer-motion";
+import signupImage from "../../assets/signup.png";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -21,7 +22,7 @@ const SignUp = () => {
   };
 
   return (
-    <AuthLayout imageUrl="/signup.png">
+    <AuthLayout imageUrl={signupImage}>
       <motion.h1
         className="mb-4 text-center text-3xl font-extrabold text-white"
         initial={{ opacity: 0, y: -20 }}
