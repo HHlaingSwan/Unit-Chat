@@ -32,6 +32,9 @@ app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/message", messageRouter);
 app.use("/api/user", userRouter);
+app.use("/healty", (req, res) => {
+  res.status(200).json({ message: "Server is healthy" });
+});
 
 httpServer.listen(port, async () => {
   try {
