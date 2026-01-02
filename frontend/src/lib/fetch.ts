@@ -1,7 +1,7 @@
 // The base URL for all API requests.
 // It first tries to read the `VITE_API_BASE_URL` from the environment variables.
 // If it's not defined, it defaults to "/api/v1".
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
+const BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/api`;
 
 // Defines the options that can be passed to the `request` function.
 // It extends the native `RequestInit` type, but omits the `body` property
