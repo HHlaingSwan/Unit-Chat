@@ -1,10 +1,8 @@
-import EmptyImage from "../../assets/Empty.png";
-
 const EmptyState = () => {
   return (
     <div className="flex flex-col items-center justify-center h-full w-full">
       <img
-        src={EmptyImage}
+        src="/Empty.png"
         alt="Empty State"
         className="w-1/2 h-1/2 object-contain"
       />

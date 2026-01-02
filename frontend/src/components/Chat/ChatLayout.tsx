@@ -6,7 +6,6 @@ import EmptyState from "./EmptyState";
 import { cn } from "../../lib/utils";
 import ProfileView from "./ProfileView";
 import { ArrowLeft } from "lucide-react";
-import bgImage from "../../assets/bg.png";
 
 const ChatLayout = () => {
   const { selectedUser, viewingUserProfile, setViewedUserProfile } =
@@ -15,7 +14,7 @@ const ChatLayout = () => {
   return (
     <div className="relative flex h-screen w-screen items-center justify-center">
       <img
-        src={bgImage}
+        src="/bg.png"
         alt="background"
         className="absolute top-0 left-0 h-full w-full object-cover"
       />
