@@ -62,7 +62,6 @@ async function request<T>(
       config.body = JSON.stringify(options.body);
     }
   }
-  console.log("url", url);
 
   // Make the `fetch` call.
   const response = await fetch(url, config);

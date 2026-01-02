@@ -18,7 +18,7 @@ const url = envConfig.MONGODB_URI;
 
 initializeSocket(httpServer);
 
-app.use(express.json({ limit: "20mb" })); // Parse JSON request bodies
+app.use(express.json({ limit: "10mb" })); // Parse JSON request bodies
 app.use(
   cors({
     origin: envConfig.CLIENT_URL,

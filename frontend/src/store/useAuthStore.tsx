@@ -79,7 +79,6 @@ const useAuthStore = create<AuthStore>((set) => ({
     set({ isLoading: true });
     try {
       const res = await fetcher.post<any>("/auth/login", data);
-      console.log("res", res.user);
 
       if (res.success === false) {
         toast.error(res.message);
