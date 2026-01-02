@@ -44,7 +44,6 @@ const MessageInput = ({ disabled }: MessageInputProps) => {
       text,
       image,
     });
-    // Reset form only after the message is sent
     setText("");
     setImage(null);
     setPreviewUrl(null);

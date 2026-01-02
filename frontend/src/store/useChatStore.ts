@@ -76,17 +76,50 @@ const useChatStore = create<ChatState>((set, get) => ({
   setViewedUserProfile: (user) => {
     set({ viewingUserProfile: user });
   },
-  sendMessage: (message) => {
-    const { socket, selectedUser } = get();
-    if (!socket || !selectedUser) return;
+  sendMessage: async (message: NewMessage) => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
     const authUser = useAuthStore.getState().authUser;
     if (!authUser) return;
 
+    set({ isSendingMessage: true });
+
+    // If there's an image, upload via HTTP first
+    if (message.image) {
+      const formData = new FormData();
+      formData.append("text", message.text || "");
+      formData.append("image", message.image);
+
+      try {
+        const res = await fetcher.post<Message>(
+          `/message/send/${selectedUser._id}`,
+          formData
+        );
+        set((state) => ({
+          messages: [...state.messages, res],
+          isSendingMessage: false,
+        }));
+        return;
+      } catch (error) {
+        console.error("Error sending message:", error);
+        toast.error("Failed to send message");
+        set({ isSendingMessage: false });
+        return;
+      }
+    }
+
+    // Text-only message via socket
+    const { socket } = get();
+    if (!socket) {
+      set({ isSendingMessage: false });
+      return;
+    }
     socket.emit("sendMessage", {
-      ...message,
+      text: message.text,
       receiverId: selectedUser._id,
       senderId: authUser._id,
     });
+    set({ isSendingMessage: false });
   },
   acceptContact: async (userId: string) => {
     try {
@@ -128,15 +161,17 @@ const useChatStore = create<ChatState>((set, get) => ({
     });
 
     newSocket.on("newMessage", (message) => {
-      const selectedUser = get().selectedUser;
+      const { messages, selectedUser } = get();
       if (
         selectedUser &&
         (selectedUser._id === message.senderId ||
           selectedUser._id === message.receiverId)
       ) {
-        set((state) => ({
-          messages: [...state.messages, message],
-        }));
+        // Prevent duplicates
+        const exists = messages.some((m) => m._id === message._id);
+        if (!exists) {
+          set({ messages: [...messages, message] });
+        }
       } else {
         toast.success(`New message received`);
       }
